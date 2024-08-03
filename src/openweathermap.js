@@ -146,10 +146,8 @@ function populateCurrentUI()
       let sunset = w.getSunsetDate();
       let lastBuild = new Date();
 
-      // Is sunset approaching before the sunrise?
       let ms = lastBuild.getTime();
-      if(sunrise.getTime() - ms > sunset.getTime() - ms)
-      {
+      if (ms > sunrise.getTime() && ms < sunset.getTime()) {
         this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunset-symbolic"));
         this.topBoxSunInfo.text = w.displaySunset(this);
       }

@@ -817,26 +817,12 @@ export async function getWeatherInfo(extension, gettext)
         let m = json.main;
         let iconId = json.weather[0].icon;
 
-        // OpenWeatherMap bug? Sunrise/sunset seconds seems to always return
-        // for same day even if sunrise is tomorrow morning. Therefore just
-        // subtract today and we'll decide if it's tomorrow or not
-        let thisMorningMs = new Date().setHours(0, 0, 0, 0);
-        let midnightMs = thisMorningMs + 3600000 * 24;
-        let sunriseMs = json.sys.sunrise * 1000 - thisMorningMs;
-        let sunsetMs = json.sys.sunset * 1000 - thisMorningMs;
+        let sunriseMs = json.sys.sunrise * 1000;
+        let sunsetMs = json.sys.sunset * 1000;
 
         let sunrise, sunset;
-        // "pod" = Part of Day, "d" = day, "n" = night
-        if(forecastResponse[1].list[0].sys.pod === "d")
-        {
-          sunrise = new Date(sunriseMs + midnightMs);
-          sunset  = new Date(sunsetMs  + thisMorningMs);
-        }
-        else
-        {
-          sunrise = new Date(sunriseMs + thisMorningMs);
-          sunset  = new Date(sunsetMs  + midnightMs);
-        }
+        sunrise = new Date(sunriseMs);
+        sunset = new Date(sunsetMs);
 
         let forecastDays = clamp(1, extension._days_forecast + 1, 5);
         extension._forecastDays = forecastDays - 1;
@@ -943,24 +929,13 @@ export async function getWeatherInfo(extension, gettext)
 
         const KPH_TO_MPS = 1.0 / 3.6;
 
-        // Just a time is returned, we need to figure out if that time is
-        // today or tomorrow
         let thisMorningMs = new Date().setHours(0, 0, 0, 0);
-        let midnightMs = thisMorningMs + 3600000 * 24;
-        let sunriseMs = timeToMs(astro.sunrise);
-        let sunsetMs = timeToMs(astro.sunset);
+        let sunriseMs = timeToMs(astro.sunrise) + thisMorningMs;
+        let sunsetMs = timeToMs(astro.sunset) + thisMorningMs;
 
         let sunrise, sunset;
-        if(m.is_day)
-        {
-          sunrise = new Date(sunriseMs + midnightMs);
-          sunset  = new Date(sunsetMs  + thisMorningMs);
-        }
-        else
-        {
-          sunrise = new Date(sunriseMs + thisMorningMs);
-          sunset  = new Date(sunsetMs  + midnightMs);
-        }
+        sunrise = new Date(sunriseMs);
+        sunset = new Date(sunsetMs);
 
         let gotDaysForecast = json.forecast.forecastday.length;
         let forecastDays = clamp(1, extension._days_forecast + 1, gotDaysForecast);
