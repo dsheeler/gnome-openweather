@@ -393,6 +393,7 @@ export class Weather
 
   #sunrise;
   #sunset;
+  #sunriseTomorrow;
 
   #forecasts;
 
@@ -408,9 +409,10 @@ export class Weather
     * @param {string} condition
     * @param {Date} sunrise
     * @param {Date} sunset
+    * @param {Date} sunriseTomorrow
     * @param {(Forecast[][] | null)} forecasts
     */
-  constructor(tempC, feelsLikeC, humidityPercent, pressureMBar, windMps, windDirDeg, gustsMps, iconName, condition, sunrise, sunset, forecasts = null)
+  constructor(tempC, feelsLikeC, humidityPercent, pressureMBar, windMps, windDirDeg, gustsMps, iconName, condition, sunrise, sunset, sunriseTomorrow = null, forecasts = null)
   {
     this.#tempC = tempC;
     this.#feelsLikeC = feelsLikeC;
@@ -422,6 +424,7 @@ export class Weather
     this.#iconName = iconName;
     this.#sunrise = sunrise;
     this.#sunset = sunset;
+    this.#sunriseTomorrow = sunriseTomorrow
     this.#forecasts = forecasts ? forecasts.length > 0 ? forecasts : null : null;
 
     if(typeof condition === "string") this.#condition = condition;
@@ -515,6 +518,22 @@ export class Weather
   getSunriseDate()
   {
     return this.#sunrise;
+  }
+
+  /**
+    * @returns {string}
+    */
+  displaySunriseTomorrow(extension)
+  {
+    return extension.formatTime(this.#sunriseTomorrow);
+  }
+
+  /**
+    * @returns {Date}
+    */
+  getSunriseTomorrowDate()
+  {
+    return this.#sunriseTomorrow;
   }
 
   /**
@@ -855,7 +874,8 @@ export async function getWeatherInfo(extension, gettext)
                 getIconName(WeatherProvider.OPENWEATHERMAP, fIconId, isFNight, true),
                 getCondit(extension, h.weather[0].id, h.weather[0].description, gettext),
                 sunrise,
-                sunset
+                sunset,
+                sunrise
               )
             ));
           }
@@ -874,6 +894,7 @@ export async function getWeatherInfo(extension, gettext)
           getCondit(extension, json.weather[0].id, json.weather[0].description, gettext),
           sunrise,
           sunset,
+          sunrise,
           forecasts
         );
       }
@@ -964,7 +985,8 @@ export async function getWeatherInfo(extension, gettext)
                 getIconName(WeatherProvider.WEATHERAPICOM, h.condition.code, !h.is_day, true),
                 getCondit(extension, h.condition.code, h.condition.text, gettext),
                 sunrise,
-                sunset
+                sunset,
+                sunrise
               )
             ));
           }
@@ -983,6 +1005,7 @@ export async function getWeatherInfo(extension, gettext)
           getCondit(extension, m.condition.code, m.condition.text, gettext),
           sunrise,
           sunset,
+          sunrise,
           forecasts
         );
       }
@@ -1036,6 +1059,7 @@ export async function getWeatherInfo(extension, gettext)
         {
           let day = [ ];
           let d = json.days[i];
+
           for(let j = 0; j < d.hours.length; j++)
           {
             let h = d.hours[j];
@@ -1058,7 +1082,8 @@ export async function getWeatherInfo(extension, gettext)
                 getIconName(WeatherProvider.VISUALCROSSING, h.icon, h.icon.endsWith("-night"), true),
                 gettext(h.conditions),
                 hSunriseDt,
-                hSunsetDt
+                hSunsetDt,
+                hSunriseDt
               )
             ));
           }
@@ -1068,6 +1093,7 @@ export async function getWeatherInfo(extension, gettext)
         let m = json.currentConditions;
         let sunriseDt = new Date(m.sunriseEpoch * 1000);
         let sunsetDt = new Date(m.sunsetEpoch * 1000);
+        let sunriseTomorrowDt = new Date(json.days[1].sunriseEpoch * 1000);
 
         return new Weather(
           m.temp,
@@ -1082,6 +1108,7 @@ export async function getWeatherInfo(extension, gettext)
           gettext(m.conditions),
           sunriseDt,
           sunsetDt,
+          sunriseTomorrowDt,
           forecasts
         );
       }
