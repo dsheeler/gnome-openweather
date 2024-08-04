@@ -147,14 +147,18 @@ function populateCurrentUI()
       let lastBuild = new Date();
 
       let ms = lastBuild.getTime();
-      if (ms > sunrise.getTime() && ms < sunset.getTime()) {
+      if (ms < sunrise.getTime()) {
+        this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunrise-symbolic"));
+        this.topBoxSunInfo.text = w.displaySunrise(this);
+      }
+      else if (ms > sunrise.getTime() && ms < sunset.getTime()) {
         this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunset-symbolic"));
         this.topBoxSunInfo.text = w.displaySunset(this);
       }
       else
       {
         this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunrise-symbolic"));
-        this.topBoxSunInfo.text = w.displaySunrise(this);
+        this.topBoxSunInfo.text = w.displaySunriseTomorrow(this);
       }
 
       let weatherInfoC = "";
