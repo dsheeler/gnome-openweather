@@ -152,7 +152,7 @@ function populateCurrentUI()
         this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunrise-symbolic"));
         this.topBoxSunInfo.text = w.displaySunrise(this);
       }
-      else if (ms > sunrise.getTime() && ms < sunset.getTime())
+      else if (ms < sunset.getTime())
       {
         this.topBoxSunIcon.set_gicon(this.getGIcon("daytime-sunset-symbolic"));
         this.topBoxSunInfo.text = w.displaySunset(this);
