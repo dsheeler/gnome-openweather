@@ -424,7 +424,7 @@ export class Weather
     this.#iconName = iconName;
     this.#sunrise = sunrise;
     this.#sunset = sunset;
-    this.#sunriseTomorrow = sunriseTomorrow
+    this.#sunriseTomorrow = sunriseTomorrow;
     this.#forecasts = forecasts ? forecasts.length > 0 ? forecasts : null : null;
 
     if(typeof condition === "string") this.#condition = condition;
