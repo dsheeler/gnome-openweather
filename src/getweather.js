@@ -814,7 +814,7 @@ export async function getWeatherInfo(extension, gettext)
           let cur = loadJsonAsync("https://api.openweathermap.org/data/2.5/weather", params);
           let fore = loadJsonAsync("https://api.openweathermap.org/data/2.5/forecast", params);
           let daily = loadJsonAsync("https://api.openweathermap.org/data/2.5/forecast/daily", params);
-          let allResp = await Promise.all([ cur, fore, daily]);
+          let allResp = await Promise.all([ cur, fore, daily ]);
           response = allResp[0];
           forecastResponse = allResp[1];
           dailyResponse = allResp[2];
